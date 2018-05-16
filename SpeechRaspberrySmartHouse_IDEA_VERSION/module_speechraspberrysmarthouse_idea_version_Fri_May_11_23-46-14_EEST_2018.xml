@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_speechraspberrysmarthouse_idea_version" default="compile.module.speechraspberrysmarthouse_idea_version">
+  <dirname property="module.speechraspberrysmarthouse_idea_version.basedir" file="${ant.file.module_speechraspberrysmarthouse_idea_version}"/>
+  
+  <property name="module.jdk.home.speechraspberrysmarthouse_idea_version" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.speechraspberrysmarthouse_idea_version" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.speechraspberrysmarthouse_idea_version" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.speechraspberrysmarthouse_idea_version" value="-encoding UTF-8 -source 9 -target 9 ${compiler.args}"/>
+  
+  <property name="speechraspberrysmarthouse_idea_version.output.dir" value="${module.speechraspberrysmarthouse_idea_version.basedir}/out/production/SpeechRaspberrySmartHouse_IDEA_VERSION"/>
+  <property name="speechraspberrysmarthouse_idea_version.testoutput.dir" value="${module.speechraspberrysmarthouse_idea_version.basedir}/out/test/SpeechRaspberrySmartHouse_IDEA_VERSION"/>
+  
+  <path id="speechraspberrysmarthouse_idea_version.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="speechraspberrysmarthouse_idea_version.module.production.classpath">
+    <path refid="${module.jdk.classpath.speechraspberrysmarthouse_idea_version}"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.speechraspberrysmarthouse_idea_version.classpath"/>
+    <path refid="library.libs.classpath"/>
+    <path refid="library.libs1.classpath"/>
+    <path refid="library.libs2.classpath"/>
+  </path>
+  
+  <path id="speechraspberrysmarthouse_idea_version.runtime.production.module.classpath">
+    <pathelement location="${speechraspberrysmarthouse_idea_version.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.speechraspberrysmarthouse_idea_version.classpath"/>
+    <path refid="library.libs.classpath"/>
+    <path refid="library.libs1.classpath"/>
+    <path refid="library.libs2.classpath"/>
+  </path>
+  
+  <path id="speechraspberrysmarthouse_idea_version.module.classpath">
+    <path refid="${module.jdk.classpath.speechraspberrysmarthouse_idea_version}"/>
+    <pathelement location="${speechraspberrysmarthouse_idea_version.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.speechraspberrysmarthouse_idea_version.classpath"/>
+    <path refid="library.libs.classpath"/>
+    <path refid="library.libs1.classpath"/>
+    <path refid="library.libs2.classpath"/>
+  </path>
+  
+  <path id="speechraspberrysmarthouse_idea_version.runtime.module.classpath">
+    <pathelement location="${speechraspberrysmarthouse_idea_version.testoutput.dir}"/>
+    <pathelement location="${speechraspberrysmarthouse_idea_version.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.speechraspberrysmarthouse_idea_version.classpath"/>
+    <path refid="library.libs.classpath"/>
+    <path refid="library.libs1.classpath"/>
+    <path refid="library.libs2.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.speechraspberrysmarthouse_idea_version">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.speechraspberrysmarthouse_idea_version">
+    <patternset refid="excluded.from.module.speechraspberrysmarthouse_idea_version"/>
+  </patternset>
+  
+  <path id="speechraspberrysmarthouse_idea_version.module.sourcepath">
+    <dirset dir="${module.speechraspberrysmarthouse_idea_version.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.speechraspberrysmarthouse_idea_version" depends="compile.module.speechraspberrysmarthouse_idea_version.production,compile.module.speechraspberrysmarthouse_idea_version.tests" description="Compile module SpeechRaspberrySmartHouse_IDEA_VERSION"/>
+  
+  <target name="compile.module.speechraspberrysmarthouse_idea_version.production" depends="register.custom.compilers" description="Compile module SpeechRaspberrySmartHouse_IDEA_VERSION; production classes">
+    <mkdir dir="${speechraspberrysmarthouse_idea_version.output.dir}"/>
+    <javac2 destdir="${speechraspberrysmarthouse_idea_version.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.speechraspberrysmarthouse_idea_version}/javac">
+      <compilerarg line="${compiler.args.speechraspberrysmarthouse_idea_version}"/>
+      <bootclasspath refid="speechraspberrysmarthouse_idea_version.module.bootclasspath"/>
+      <classpath refid="speechraspberrysmarthouse_idea_version.module.production.classpath"/>
+      <src refid="speechraspberrysmarthouse_idea_version.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.speechraspberrysmarthouse_idea_version"/>
+    </javac2>
+    
+    <copy todir="${speechraspberrysmarthouse_idea_version.output.dir}">
+      <fileset dir="${module.speechraspberrysmarthouse_idea_version.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.speechraspberrysmarthouse_idea_version.tests" depends="register.custom.compilers,compile.module.speechraspberrysmarthouse_idea_version.production" description="compile module SpeechRaspberrySmartHouse_IDEA_VERSION; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.speechraspberrysmarthouse_idea_version" description="cleanup module">
+    <delete dir="${speechraspberrysmarthouse_idea_version.output.dir}"/>
+    <delete dir="${speechraspberrysmarthouse_idea_version.testoutput.dir}"/>
+  </target>
+</project>

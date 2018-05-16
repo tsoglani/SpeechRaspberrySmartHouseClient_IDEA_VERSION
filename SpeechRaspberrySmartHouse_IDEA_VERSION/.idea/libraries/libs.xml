@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="libs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/java-flac-encoder-0.3.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/apache-httpcomponents-httpcore.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/commons-lang3-3.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/chatter-bot-api-1.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/joda-time-2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/derby.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/geoip-api-1.2.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/jaco-mp3-player-0.9.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/org.apache.commons.logging-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/httpclient-4.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/java-json.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/org.apache.commons.io.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/SpeechRaspberrySmartHouse/libs/derbyclient.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -159,10 +159,9 @@ public class AddNewShedule extends JPanel
             public void stateChanged(ChangeEvent changeEvent) {
                 Object source = changeEvent.getSource();
                 JSlider theJSlider = (JSlider) source;
-                min=theJSlider.getValue();
+                sec=theJSlider.getValue();
                 String hoursString=null;
-                String minString=null;        minLabel= new JLabel( "Minutes:         ");
-
+                String minString=null;        
                 String secString=null;
 
                 if(hours<10){
@@ -220,7 +219,7 @@ isActive.setSelected(true);
         for(int i=0;i<7;i++){
             JLabel dayButton=null;
             switch(i){
-                case 0:
+                 case 0:
                 dayButton= new JLabel("Su",SwingConstants.CENTER);
                 break;
                 case 1:
@@ -241,6 +240,7 @@ isActive.setSelected(true);
                 case 6:
                 dayButton= new JLabel("Sa",SwingConstants.CENTER);
                 break;    
+               
                 default: 
                 dayButton= new JLabel("Uknown",SwingConstants.CENTER);
 
@@ -289,7 +289,7 @@ isActive.setSelected(true);
         minPanel.add(minSlider);
         secPanel.setLayout(new BorderLayout());
         secPanel.add(secLabel,BorderLayout.LINE_START);
-        secPanel.add(minSlider);
+        secPanel.add(secSlider);
 
         JPanel changeHourPanel=new JPanel();
         timerPanel.add(timeLabel);
@@ -359,7 +359,7 @@ isActive.setSelected(true);
                         + activeDays+fr.sh.db.COMMAND_SPLIT_STRING+fr.sh.db.TIME_STRING+timeLabel.getText()
                         +fr.sh.db.COMMAND_SPLIT_STRING+fr.sh.db.IS_WEEKLY+isWeekly.isSelected() +fr.sh.db.COMMAND_SPLIT_STRING+
                         fr.sh.db.IS_ACTIVE+isActive.isSelected();
-                  
+                  System.out.println("DATABASE::"+CommandText);
                 fr.sh.db.add(CommandText);
                     
                       

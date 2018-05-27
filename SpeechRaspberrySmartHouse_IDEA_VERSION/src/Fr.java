@@ -49,7 +49,7 @@ public class Fr extends JFrame
         width=screenSize.getWidth();
         height=screenSize.getHeight();
         speechTextLabel= new JLabel();
-
+System.out.println("Fr is running");
 
         //      StyleContext context = new StyleContext();
         //     StyledDocument document = new DefaultStyledDocument(context);
@@ -197,7 +197,7 @@ public class Fr extends JFrame
                     new Thread(){public void run(){
                         try{
                             findMobileButton.setEnabled(false);
-                            sh.jarvis.findMobile();
+                           sh.jarvis.findMobile();
                             findMobileButton.setIcon(findMobileAbcIcon) ;
                             sleep(4000);
                             findMobileButton.setEnabled(true);
@@ -397,7 +397,7 @@ public class Fr extends JFrame
         switcButtons=new JButton[usingList.length];
         String [] outputs=neededOutputs.split("@@@");
 
-        center.setLayout(new GridLayout((int)Math.sqrt(usingList.length)+1,(int)Math.sqrt(usingList.length)+1));
+        center.setLayout(new GridLayout((int)Math.sqrt(usingList.length),(int)Math.sqrt(usingList.length)));
 
         for(int i=0;i<usingList.length;i++){
             ArrayList <String> list=usingList[i];

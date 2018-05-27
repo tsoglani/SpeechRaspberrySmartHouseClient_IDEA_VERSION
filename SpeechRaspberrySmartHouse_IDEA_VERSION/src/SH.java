@@ -50,7 +50,7 @@ public class SH {
 
     private  static String deviceName = "tsoglani";// ** is used for global connection for safety, must put it on android device name field in global connection option.
     ///** every startingDeviceID must be unique in every raspberry device contected in local network.
-    static int DeviceID = 0; // Example: if we have 4 raspberry devices connected in local network, each one MUST have a unique ID :
+     static int DeviceID = 0; // Example: if we have 4 raspberry devices connected in local network, each one MUST have a unique ID :
     // the first Ruspberry device DeviceID will be 0, the second device's DeviceID will be 1
     // the third will be 2 the fourth will be 3 ...    (it is very important)
 
@@ -69,9 +69,36 @@ public class SH {
     private ArrayList<String> ON, OFF;// = "on", OFF = "off";// word you have to use at the end of the command to activate or deactivate
     private ArrayList<String> ONAtTheStartOfSentence, OFFAtTheStartOfSentence;
     private  ArrayList<String> exclusiveOutputs= new ArrayList<String>();;
+private boolean isGoingToBeOn_OnSwitchOn=false;
+    
+     public  void isGoingToBeOn_OnSwitchOn(String fileName){
 
+        String line;
+        BufferedReader br;
+        try {
+            InputStream fis = null;
+            fis = new FileInputStream(fileName);
 
-    public  void readDeviceID(String fileName){
+            InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+            br = new BufferedReader(isr);
+            int counter =0;
+            while ((line = br.readLine()) != null) {
+
+                if (line.startsWith("isGoingToBeOn_OnSwitchOn:")){
+                    line=  line.substring("isGoingToBeOn_OnSwitchOn:".length(),line.length()).replaceAll(" ","");
+                    isGoingToBeOn_OnSwitchOn=Boolean.parseBoolean(line);
+                }
+            }
+            System.out.println("isGoingToBeOn_OnSwitchOn"+isGoingToBeOn_OnSwitchOn);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        isGoingToBeOn_OnSwitchOn=false;
+        }
+    }
+    
+    
+     public  void readDeviceID(String fileName){
 
         String line;
         BufferedReader br;
@@ -97,71 +124,71 @@ public class SH {
         }
     }
 
-
+    
     private void sendEmailOnBoot(String fileName){
-        String line=null,output=null;
+    String line=null,output=null;
         BufferedReader br;
-        boolean enable_send_mail_on_boot=false;
-        String email_from=null,email_password=null;
-        ArrayList <String>emails_to=new ArrayList <String>();
+         boolean enable_send_mail_on_boot=false;
+         String email_from=null,email_password=null;
+         ArrayList <String>emails_to=new ArrayList <String>();
         try {
             InputStream fis = new FileInputStream(fileName);
             InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
             br = new BufferedReader(isr);
-            while ((line = br.readLine()) != null) {
+           while ((line = br.readLine()) != null) {
                 // Deal with the line
 
                 if (line.startsWith("enable_send_mail_on_boot:")){
                     output=line.substring("enable_send_mail_on_boot:".length(),line.length());
-                    enable_send_mail_on_boot=Boolean.parseBoolean(output.replaceAll(" ",""));
-                    System.out.println("enable_send_mail_on_boot"+enable_send_mail_on_boot);
+                   enable_send_mail_on_boot=Boolean.parseBoolean(output.replaceAll(" ",""));
+             System.out.println("enable_send_mail_on_boot"+enable_send_mail_on_boot);
                 }else if (line.startsWith("email_from:")){
                     output=line.substring("email_from:".length(),line.length());
-                    email_from=output;
-                    System.out.println("email_from"+email_from);
+                   email_from=output;
+             System.out.println("email_from"+email_from);
                 }else if (line.startsWith("email_to:")){
                     output=line.substring("email_to:".length(),line.length());
-                    emails_to.add(output);
-                    System.out.println("email_to"+output);
+                   emails_to.add(output);
+             System.out.println("email_to"+output);
                 }
-                else if (line.startsWith("email_password:")){
+else if (line.startsWith("email_password:")){
                     output=line.substring("email_password:".length(),line.length());
-                    email_password=output;
-                    System.out.println("email_password"+email_password);
+                   email_password=output;
+             System.out.println("email_password"+"****");
                 }
-            }
-            if(!enable_send_mail_on_boot||email_from==null|| emails_to.isEmpty()|| email_password==null){
-                return;
-            }
-            final String emailFrom=email_from,emailPassword=email_password;
-            final ArrayList<String> emailsTo=emails_to;
-            new Thread(){
-                @Override
-                public void run() {
-                    String externalIP=getIP();
-                    while(externalIP==null){
-                        try {
-                            sleep(30000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        externalIP=getIP();
-
-                    }
+                }
+if(!enable_send_mail_on_boot||email_from==null|| emails_to.isEmpty()|| email_password==null){
+return;
+}
+final String emailFrom=email_from,emailPassword=email_password;
+final ArrayList<String> emailsTo=emails_to;
+new Thread(){
+            @Override
+            public void run() {
+                String externalIP=getIP();
+                while(externalIP==null){
                     try {
-                        for(String emailTo:emailsTo){
-                            new EmailJava(emailFrom,emailTo,emailPassword,externalIP,deviceName);
-                        }
-                    } catch (Exception e) {
+                        sleep(30000);
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    externalIP=getIP();
+
                 }
-            }.start();
+                try {
 
+                new EmailJava(emailFrom,emailsTo,emailPassword,externalIP,deviceName);
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
 
+    
 
 //                System.out.println();
-
+            
 
         }catch (Exception e){
             e.printStackTrace();
@@ -170,12 +197,12 @@ public class SH {
 
 
     }
+    
+    
+    
+  
 
-
-
-
-
-    private String getIP() {
+private String getIP() {
 
         String systemipaddress = "";
         try {
@@ -208,21 +235,21 @@ public class SH {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(ipAdress.openStream()));
 
-            ip = in.readLine();
-            System.out.println();
+             ip = in.readLine();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return ip;
+return ip;
 
     }
 
-
-
-
-
-
+    
+    
+    
+    
+    
     public static String readUserName(String fileName){
 
 
@@ -337,7 +364,7 @@ public class SH {
                 String numberListString=line.split("@@")[1];
                 String numbersString[] =numberListString.split(",");
                 Integer[] numbers=new Integer[numbersString.length];////////////////
-                System.out.println();
+
                 for (  int i=0;i<numbersString.length;i++){
                     numbers[i]= Integer.parseInt(numbersString[i].replaceAll(" ",""));
                     System.out.println("numbers"+  numbersString[i].replaceAll(" ","")+" ");
@@ -579,29 +606,29 @@ public class SH {
         declareInputsAndOutputs("/home/pi/Desktop/SpeechRaspberrySmartHouse/gpio_input_output.txt");
         readPort("/home/pi/Desktop/SpeechRaspberrySmartHouse/port.txt");
         readExclusiveOutputs("/home/pi/Desktop/SpeechRaspberrySmartHouse/exclusiveOutputs.txt");
-
-
+isGoingToBeOn_OnSwitchOn("/home/pi/Desktop/SpeechRaspberrySmartHouse/isGoingToBeOn_OnSwitchOn.txt");
+        
         if(hasExterlanGPIO) {
 
-            BigDecimal frequency = new BigDecimal("48.828");
-            // Correction factor: actualFreq / targetFreq
-            // e.g. measured actual frequency is: 51.69 Hz
-            // Calculate correction factor: 51.65 / 48.828 = 1.0578
-            // --> To measure actual frequency set frequency without correction factor(or set to 1)
-            BigDecimal frequencyCorrectionFactor = new BigDecimal("1.0578");
-            // Create custom PCA9685 GPIO provider
-            I2CBus bus;
-            try {
-                bus = I2CFactory.getInstance(I2CBus.BUS_1);
+    BigDecimal frequency = new BigDecimal("48.828");
+    // Correction factor: actualFreq / targetFreq
+    // e.g. measured actual frequency is: 51.69 Hz
+    // Calculate correction factor: 51.65 / 48.828 = 1.0578
+    // --> To measure actual frequency set frequency without correction factor(or set to 1)
+    BigDecimal frequencyCorrectionFactor = new BigDecimal("1.0578");
+    // Create custom PCA9685 GPIO provider
+    I2CBus bus;
+    try {
+        bus = I2CFactory.getInstance(I2CBus.BUS_1);
 
-                provider = new PCA9685GpioProvider(bus, 0x40, frequency, frequencyCorrectionFactor);
+        provider = new PCA9685GpioProvider(bus, 0x40, frequency, frequencyCorrectionFactor);
 
-            } catch (I2CFactory.UnsupportedBusNumberException ex) {
-                Logger.getLogger(SH.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(SH.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+    } catch (I2CFactory.UnsupportedBusNumberException ex) {
+        Logger.getLogger(SH.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException ex) {
+        Logger.getLogger(SH.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}
         NumberOfBindingCommands= powerCommandFileLength(fileCommandPath);
         outputPowerCommands = new ArrayList[NumberOfBindingCommands];
         activatePortOnCommand = new ArrayList[NumberOfBindingCommands];
@@ -1329,7 +1356,9 @@ public class SH {
 
     private void startReceivingData() throws IOException {
         boolean isOnSwitchView = false;
+        try{
         serverSocket = new DatagramSocket(port);
+    }catch(Exception e){}
         System.out.println("Waiting for data..");
         while (true) {
             boolean existAsLed;
@@ -1344,6 +1373,8 @@ public class SH {
             //                 addresses.add(receivePacket.getAddress());
             //             if(!allPorts.contains(receivePacket.getPort()))
             //                 allPorts.add(receivePacket.getPort());
+            System.out.println("-------------->sentence::"+sentence);
+            
             String uniqueUserID = "1";
             if (sentence.startsWith("userUniqueID:")) {
                 uniqueUserID = sentence.split(DB.USER_ID_SPLIT)[0];
@@ -1379,7 +1410,6 @@ public class SH {
             if (sentence.startsWith("switch ")) {
 
                 sentence = sentence.substring("switch ".length(), sentence.length());
-                System.out.println(sentence);
                 //   sendData(sentence, receivePacket.getAddress(), receivePacket.getPort());
                 sendToAll(sentence);
                 sendTheUpdates(sentence);
@@ -1420,13 +1450,13 @@ public class SH {
                         }
                     }
                 }.start();
-                System.out.println(sentence);
+
             } else if (sentence.startsWith("globalReturning")) {// used when connect for first time and send ok back, when the android receive the ok open to next view
                 sentence = sentence.substring("globalReturning".length());
-                System.out.println(sentence + " " + deviceName);
+
                 if (sentence.replace(" ", "").equalsIgnoreCase(deviceName.replace(" ", ""))) {
                     sendData("ok", receivePacket.getAddress(), receivePacket.getPort());
-                    System.out.println("<ok/>");
+
                 } else {
                     sendData("wrong", receivePacket.getAddress(), receivePacket.getPort());
                     continue;
@@ -1434,7 +1464,7 @@ public class SH {
                 //     addresses.add(receivePacket.getAddress());
             } else if (sentence.startsWith("returning")) {// used when connect for first time and send ok back, when the android receive the ok open to next view
                 sendData("ok", receivePacket.getAddress(), receivePacket.getPort());
-                System.out.println("<ok/>");
+
                 //     addresses.add(receivePacket.getAddress());
             } //            if (sentence.startsWith("manual_switch_view")) {
             //                String msg = "works";// getAllOutput();
@@ -1443,7 +1473,7 @@ public class SH {
             //            }
             else if (sentence.startsWith("getAllOutput")) { // I say than I need all the outputs
                 String msg = getAllOutput();//"getput on@@@getoutt2 off";//
-                System.out.println("msg = " + msg);
+
                 if (msg != null && !msg.replaceAll(" ", "").equalsIgnoreCase("")) {
                     sendData("respondGetAllOutput" + msg, receivePacket.getAddress(), receivePacket.getPort());
                 }
@@ -1453,7 +1483,7 @@ public class SH {
                 if (msg != null && !msg.replaceAll(" ", "").equalsIgnoreCase("")) {
                     sendData("respondGetAllCommandsOutput" + msg, receivePacket.getAddress(), receivePacket.getPort());
                 }
-                System.out.println(msg);
+
             } else if (sentence.startsWith("saveShedule")) { // I say than I need all the commands that open ports with each one state ( Example : "kitchen light on" kitchen light is the commands and on or of are the states  )
                 //prepei na stelnw device id
 
@@ -1465,6 +1495,8 @@ public class SH {
 
                     usingCommand = usingCommand.substring((wantedDeviceIDString + DB.COMMAND_SPLIT_STRING).length(), usingCommand.length());
                     String out = db.add(usingCommand);
+                    String cmd=usingCommand.substring("CommandText:".length(),usingCommand.length()).split(DB.COMMAND_SPLIT_STRING)[0];
+
                     if (out != null) {
                         if (!out.equals("addedNotOk")) {
                             sendToAllExcept("Shedules:" + out, receivePacket.getAddress(), receivePacket.getPort());
@@ -1475,8 +1507,11 @@ public class SH {
                     }
 
 
-                    new SheduleView(fr).createByDeviceGUI(outputPowerCommands[Integer.parseInt(wantedDeviceIDString.replaceAll(" ",""))].get(0));
+if(fr==null||SheduleView.selectedOption==null||fr.isSheduleModeSelected&&(!SheduleView.selectedOption.startsWith("all")))
+                        new SheduleView(fr).createByDeviceGUI(cmd);
+                    
 
+                    
                 }
             } else if (sentence.startsWith("updateShedule")) { // I say than I need all the commands that open ports with each one state ( Example : "kitchen light on" kitchen light is the commands and on or of are the states  )
                 //prepei na stelnw device id+
@@ -1492,10 +1527,11 @@ public class SH {
                     usingCommand = usingCommand.substring((wantedCommandID + DB.COMMAND_SPLIT_STRING).length(), usingCommand.length());
 
                     db.updateShedule(usingCommand, wantedCommandID);//thelw command id edw
+                                        String cmd=usingCommand.substring("CommandText:".length(),usingCommand.length()).split(DB.COMMAND_SPLIT_STRING)[0];
 
-
-                    new SheduleView(fr).createByDeviceGUI(outputPowerCommands[Integer.parseInt(wantedDeviceIDString.replaceAll(" ",""))].get(0));
-
+if(fr==null||SheduleView.selectedOption==null||fr.isSheduleModeSelected&&(!SheduleView.selectedOption.startsWith("all")))
+                        new SheduleView(fr).createByDeviceGUI(cmd);
+                    
                 }
             } else if (sentence.startsWith("updateSingleShedule")) { // I say than I need all the commands that open ports with each one state ( Example : "kitchen light on" kitchen light is the commands and on or of are the states  )
                 //prepei na stelnw device id+
@@ -1505,7 +1541,7 @@ public class SH {
                 String[] list = usingCommand.split(DB.COMMAND_SPLIT_STRING);
                 String wantedDeviceIDString = list[0];
                 if (Integer.parseInt(wantedDeviceIDString) == DeviceID) {
-
+                    
                     usingCommand = usingCommand.substring((wantedDeviceIDString + DB.COMMAND_SPLIT_STRING + DB.COMMAND_ID).length(), usingCommand.length());
 
                     String[] list2 = usingCommand.split(DB.COMMAND_SPLIT_STRING);
@@ -1516,8 +1552,10 @@ public class SH {
                     db.updateSingleShedule(usingCommand, wantedCommandID, stringModeModify);//thelw command id edw
 
 
-                    new SheduleView(fr).createByDeviceGUI(outputPowerCommands[Integer.parseInt(wantedDeviceIDString.replaceAll(" ",""))].get(0));
-
+                                        String cmd=usingCommand.substring("CommandText:".length(),usingCommand.length()).split(DB.COMMAND_SPLIT_STRING)[0];
+if(fr==null||SheduleView.selectedOption==null||fr.isSheduleModeSelected&&(!SheduleView.selectedOption.startsWith("all")))
+                        new SheduleView(fr).createByDeviceGUI(cmd);
+                    
                 }
             } else if (sentence.startsWith("removeShedule")) { // I say than I need all the commands that open ports with each one state ( Example : "kitchen light on" kitchen light is the commands and on or of are the states  )
 
@@ -1526,15 +1564,16 @@ public class SH {
                 String usingCommand = sentence.substring(("removeShedule:" + DB.DEVICE_ID).length(), sentence.length());
                 String[] list = usingCommand.split(DB.COMMAND_SPLIT_STRING);
                 String wantedDeviceIDString = list[0];
-                //  System.out.println(usingCommand);
-                if (Integer.parseInt(wantedDeviceIDString) == DeviceID) {
 
+                if (Integer.parseInt(wantedDeviceIDString) == DeviceID) {
+                   
                     usingCommand = list[1].substring((DB.COMMAND_TEXT_STRING).length(), list[1].length());
 
                     db.removeShedule(usingCommand, list[2]);//thelw command id edw
 
-                    new SheduleView(fr).createByDeviceGUI(outputPowerCommands[Integer.parseInt(wantedDeviceIDString.replaceAll(" ",""))].get(0));
-
+if(fr==null||SheduleView.selectedOption==null||fr.isSheduleModeSelected&&(!SheduleView.selectedOption.startsWith("all")))
+                        new SheduleView(fr).createByDeviceGUI( list[2]);
+                    
                 }
             } else if (sentence.equals("getShedules")) {
 
@@ -1617,7 +1656,7 @@ public class SH {
             if (!existAsLed) {
 
                 processCommandString(sentence);
-                System.out.println("processCommandString runs ");
+
             }
         }
 
@@ -1825,12 +1864,12 @@ public class SH {
                 if (input.startsWith(outputPowerCommands[i].get(j))) {
 
                     if (ON.contains(isDoing)) {
-                        // System.out.println("found command " + outputPowerCommands[i].get(j) + " on" + ", these ports will open: " + activatePortOnCommand[i]);
+
                         for (int k = 0; k < activatePortOnCommand[i].size(); k++) {
                             ToggleLedNo(activatePortOnCommand[i].get(k), ON.get(0));
                         }
                     } else if (OFF.contains(isDoing)) {
-                        // System.out.println("found command " + outputPowerCommands[i].get(j) + " off" + ", these ports will close: " + activatePortOnCommand[i]);
+
                         for (int k = 0; k < activatePortOnCommand[i].size(); k++) {
                             ToggleLedNo(activatePortOnCommand[i].get(k), OFF.get(0));
                         }
@@ -1903,20 +1942,20 @@ public class SH {
 
     public void checkRelativePinsForExclusiveOutput(int id,boolean isGoingHigh){
         if (isGoingHigh){
-            for (int i=0;i<exclusiveOutputs.size();i++){
-                int[] list=  strArrayToIntArray(exclusiveOutputs.get(i).split(","));
+        for (int i=0;i<exclusiveOutputs.size();i++){
+            int[] list=  strArrayToIntArray(exclusiveOutputs.get(i).split(","));
 
-                for (int ii=0;ii<list.length;ii++){
+            for (int ii=0;ii<list.length;ii++){
 
-                    if (list[ii]==id){
-                        list[ii]=-1;
-                        switchExclusivePins(list,isGoingHigh);
-                        break;
-                    }
+                if (list[ii]==id){
+                    list[ii]=-1;
+                    switchExclusivePins(list,isGoingHigh);
+                    break;
                 }
+            }
 
 
-            }}
+        }}
 
     }
 
@@ -1928,30 +1967,30 @@ public class SH {
             if (id<0){
                 continue;
             }
-            GpioPinOutput pin = null;
-            pin=pins[id];
-            if (isGoingHigh&&isHight(pin)) {
+        GpioPinOutput pin = null;
+        pin=pins[id];
+        if (isGoingHigh&&isHight(pin)) {
 
-                if (pin.getName().startsWith("PinLED")) {
-                    GpioPinDigitalOutput ppp = (GpioPinDigitalOutput) pin;
-                    ppp.low();
+            if (pin.getName().startsWith("PinLED")) {
+                GpioPinDigitalOutput ppp = (GpioPinDigitalOutput) pin;
+                ppp.low();
 
-                } else if (pin.getName().startsWith("Pulse")) {
-                    GpioPinPwmOutput ppp = (GpioPinPwmOutput) pin;
-                    provider.setAlwaysOff(ppp.getPin());
-                }
-                sendToAll("switch "+DeviceID+" output "+id+" off");
-                // sendToAll("switch "+outputPowerCommands[id].get(0)+" off");
+            } else if (pin.getName().startsWith("Pulse")) {
+                GpioPinPwmOutput ppp = (GpioPinPwmOutput) pin;
+                provider.setAlwaysOff(ppp.getPin());
+            }
+        sendToAll("switch "+DeviceID+" output "+id+" off");
+       // sendToAll("switch "+outputPowerCommands[id].get(0)+" off");
+       
+       for(int i=0;i<activatePortOnCommand.length;i++){
+        ArrayList<Integer> prt=activatePortOnCommand[i];
+        if(prt.contains(id)){
+            sendToAll("switch "+outputPowerCommands[i].get(0)+" off");
 
-                for(int i=0;i<activatePortOnCommand.length;i++){
-                    ArrayList<Integer> prt=activatePortOnCommand[i];
-                    if(prt.contains(id)){
-                        sendToAll("switch "+outputPowerCommands[i].get(0)+" off");
-
-                    }
-                }
-
-            }}
+        }
+        }
+       
+        }}
 
     }
 
@@ -2061,7 +2100,7 @@ public class SH {
         boolean isHightPrevious =false;
         public GpioUsageExampleListener(GpioPinDigitalInput in, int id) {
             this.in = in;
-            System.out.println(" id " + id);
+
             this.id = id;
             isHightPrevious=in.isHigh();
             this.command = outputCommands[id].get(0);
@@ -2092,16 +2131,37 @@ public class SH {
 //            state = null;
 
 //            boolean isHigh = isHightfromSwitch(isHightPrevious !=in.isHigh());
-            boolean isHigh = isHight(pins[id]);
-            if (isHigh) {
+
+
+boolean isHigh=false;
+          
+if(!isGoingToBeOn_OnSwitchOn){
+             isHigh = isHight(pins[id]);
+             if (isHigh) {
                 state = OFF.get(0);
             } else {
                 state = ON.get(0);
             }
+            }else{
+                         isHigh =in.isHigh();
+                         if (!isHigh) {
+                state = OFF.get(0);
+            } else {
+                state = ON.get(0);
+            }
+            }
+                       System.out.println("isHigh"+isHigh);
+                             System.out.println("isHightPrevious"+isHightPrevious);
+       if((isHigh==isHightPrevious)&&isGoingToBeOn_OnSwitchOn){
+           
+           System.out.println("returning input, same input");
+           return;}
+            
             //else {
             //  System.out.println("problem state = " + state);
             //return;
             //}
+            
 
             ToggleLedNo(id, state, false);
             new Thread() {
@@ -2116,7 +2176,7 @@ public class SH {
                     }
                 }
             }.start();
-            isHightPrevious =in.isHigh();
+
 
 
 //            isRunning = false;
@@ -2130,6 +2190,7 @@ public class SH {
             //                     ex.printStackTrace();
             //                 }
             //             }
+                        isHightPrevious =in.isHigh();
         }
     }
 
@@ -2260,13 +2321,12 @@ public class SH {
                     for (int i = 0; i < db.getShedules().size(); i++) {
                         Shedule shedule = db.getShedules().get(i);
                         if (Boolean.parseBoolean(shedule.getIsActive())) {
-                            System.out.println("isActive");
+
                             if (shedule.getActiveDays().contains(getDay(calendar))) {
 
-                                System.out.println("Contains Day");
-                                System.out.println(shedule.getTime() + " timers" + getTime(calendar));
+                               
                                 if (shedule.getTime().equals(getTime(calendar))) {
-                                    System.out.println("Time is equal");
+
                                     // excecute command
                                     String extraString = null;
                                     if (shedule.getActiveDays().contains(getDay(calendar) + " on")) {
@@ -2275,7 +2335,7 @@ public class SH {
                                     if (shedule.getActiveDays().contains(getDay(calendar) + " off")) {
                                         extraString = " off";
                                     }
-                                    System.out.println(shedule.getCommandText() + extraString + "  excecuted");
+
                                     processCommandString(shedule.getCommandText() + extraString);
 
                                     if (!Boolean.parseBoolean(shedule.getIsWeekly())) {
@@ -2305,16 +2365,14 @@ public class SH {
                                             for (int h = 0; h < activatePortOnCommand[j].size(); h++) {
                                                 //
                                                 for (int p = 0; p < pins.length; p++) {
-                                                    System.out.println(p + " pins[p].getPin().getAddress()= " + pins[p].getPin().getAddress());
+
                                                     if (pins[p].getPin().getAddress() == activatePortOnCommand[j].get(h)) {
 
                                                         // System.out.println(DeviceID+ " switch "+p+" "+mode);
                                                         sendToAll("switch " + DeviceID + " output " + p + " " + mode);
                                                     }
                                                 }
-                                                // System.out.print( activatePortOnCommand[j].get(h)+" ");
-                                                //  System.out.println(h+"switch "+ outputCommands[activatePortOnCommand[j].get(0)]+" "+mode);
-                                                //       System.out.println(h+"switch "+ outputCommands[activatePortOnCommand[h].get(0)]+" "+mode);
+                                             
                                             }
 
                                         }
@@ -2336,7 +2394,7 @@ public class SH {
     }
 
     protected void sendTheUpdates(String command) {
-        //   System.out.println("outputPowerCommands = "+command);
+
         String mode = null;
         String shCm = null;
         if (command.endsWith(" on")) {
@@ -2365,16 +2423,13 @@ public class SH {
                         if (pins[p].getPin().getAddress() == activatePortOnCommand[j].get(h)) {
 
                             int sendid = getRealOutLed(p);
-                            System.out.println("switch " + outputCommands[p].get(0) + " " + mode);
-                            //    System.out.println("switch "+DeviceID+ " output "+sendid+" "+mode);
-                            // sendToAll("switch "+DeviceID+ " output "+sendid+" "+mode);
+                         //   System.out.println("switch " + outputCommands[p].get(0) + " " + mode);
+                          
                             sendToAll("switch " + outputCommands[p].get(0) + " " + mode);
                         }
                     }
 
-                    // System.out.print( activatePortOnCommand[j].get(h)+" ");
-                    //  System.out.println(h+"switch "+ outputCommands[activatePortOnCommand[j].get(0)]+" "+mode);
-                    //       System.out.println(h+"switch "+ outputCommands[activatePortOnCommand[h].get(0)]+" "+mode);
+                   
                 }
 
                 for (int k = 0; k < activatePortOnCommand.length; k++) {
@@ -2382,7 +2437,7 @@ public class SH {
                         if (activatePortOnCommand[j].containsAll(activatePortOnCommand[k])) {
 
                             sendToAll("switch " + outputPowerCommands[k].get(0) + " " + mode);
-                            // System.out.println("update 1 switch "+outputPowerCommands[k].get(0)+" "+mode);
+
                         }
                         if (activatePortOnCommand[k].containsAll(activatePortOnCommand[j])) {
                             if (mode.equals(OFF.get(0))) {
@@ -2472,7 +2527,7 @@ public class SH {
                         //                         }
                         //                         }
                         if (isActive) {
-                            System.out.println("switch " + outputPowerCommands[j].get(0) + " " + mode);
+                           // System.out.println("switch " + outputPowerCommands[j].get(0) + " " + mode);
                             sendToAll("switch " + outputPowerCommands[j].get(0) + " " + mode);
 
                         }
@@ -2583,7 +2638,7 @@ public class SH {
             thread.start();
             resetSendingTo.add(thread);
         }
-        System.out.println("sendingTo.size() =" + sendingTo.size());
+       // System.out.println("sendingTo.size() =" + sendingTo.size());
 
     }
 

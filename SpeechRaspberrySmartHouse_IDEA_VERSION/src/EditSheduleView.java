@@ -209,7 +209,7 @@ minLabel.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 20));
         for(int i=0;i<7;i++){
             JLabel dayButton=null;
             switch(i){
-                case 0:
+                  case 0:
                 dayButton= new JLabel("Su",SwingConstants.CENTER);
                 break;
                 case 1:
@@ -230,6 +230,7 @@ minLabel.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 20));
                 case 6:
                 dayButton= new JLabel("Sa",SwingConstants.CENTER);
                 break;    
+              
                 default: 
                 dayButton= new JLabel("Uknown",SwingConstants.CENTER);
 

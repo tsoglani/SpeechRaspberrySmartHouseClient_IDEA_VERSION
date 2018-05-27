@@ -2,29 +2,33 @@ import java.util.ArrayList;
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import java.util.Calendar;
+import javax.swing.border.Border;
 public class SheduleView extends JPanel
 { private JButton back;
     private Fr fr;
     private  Color []colors = {Color.white,Color.green,Color.red};
     private ArrayList   <MyJPanel> myPanels;
     private JButton addNewSchedule;
-    ImageIcon addSchedule;
-    Thread thread;
-    ImageIcon backTime;
+    private ImageIcon addSchedule;
+  private  Thread thread;
+   private  ImageIcon backTime;
+     final int sleepingTime=600;
     static  String selectedOption=null;
     public SheduleView(Fr fr)
     {
         fr.getContentPane().removeAll();
         fr.getContentPane().add(this);
-        fr.isSwitchModeSelected=false;
+        fr.isSwitchModeSelected=false;     
         fr.isSheduleModeSelected=true;
         fr.isTimerModeSelected=false;
         fr.isOnMainMenu=false;
-
-        backTime=new ImageIcon("/home/pi/Desktop/SpeechRaspberrySmartHouse/Raspberry_2B-3/raspberry_2a,b_InAndOut_40gpio_pin/back.png");
+        
+         backTime=new ImageIcon("/home/pi/Desktop/SpeechRaspberrySmartHouse/Raspberry_2B-3/raspberry_2a,b_InAndOut_40gpio_pin/back.png");
         backTime=new ImageIcon(fr.getScaledImage(backTime.getImage(),(int)(fr.height/15), (int)(fr.height/15)));
-
+       
         this.fr=fr;
         setLayout(new BorderLayout());
 
@@ -35,12 +39,12 @@ public class SheduleView extends JPanel
         addNewSchedule = new JButton(addSchedule);
 
         addNewSchedule.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                fr.isSheduleModeSelected=false;
-                fr.shv=null;
-                new SelectNewShedule(fr);
-            }
-        });
+                public void actionPerformed(ActionEvent e){
+                    fr.isSheduleModeSelected=false;
+                    fr.shv=null;
+                    new SelectNewShedule(fr);
+                }
+            });
         if(selectedOption!=null){
             if(selectedOption.equalsIgnoreCase("all")){
                 allView();
@@ -52,11 +56,11 @@ public class SheduleView extends JPanel
                 byDayView();
                 return;
             }else   if(selectedOption.startsWith("createByDayGUI")){
-                createByDayGUI(Integer.parseInt(selectedOption.substring("createByDayGUI".length(),selectedOption.length())));
+                               createByDayGUI(Integer.parseInt(selectedOption.substring("createByDayGUI".length(),selectedOption.length())));
                 return;
             }
-
-
+            
+            
             else   if(selectedOption.startsWith("createByDeviceGUI")){
                 createByDeviceGUI(selectedOption.substring("createByDeviceGUI".length(),selectedOption.length()));
                 return;
@@ -78,24 +82,24 @@ public class SheduleView extends JPanel
         menu.add(byDay);
         menu.add(byDevice);
         byAll.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                allView();
-                selectedOption="all";
-            }
-        });
+                public void actionPerformed(ActionEvent e){
+                    allView();
+                    selectedOption="all";
+                }
+            });
 
         byDevice.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                byDeviceView();
-                selectedOption="device";
-            }
-        });
+                public void actionPerformed(ActionEvent e){
+                    byDeviceView();
+                    selectedOption="device";
+                }
+            });
         byDay.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                byDayView();
-                selectedOption="day";
-            }
-        });
+                public void actionPerformed(ActionEvent e){
+                    byDayView();
+                    selectedOption="day";
+                }
+            });
 
         add(menu);
         add(header,BorderLayout.NORTH);
@@ -109,60 +113,71 @@ public class SheduleView extends JPanel
         createGUI();
 
     }
-
+    
     private void byDayView(){
-        fr.getContentPane().removeAll();
+      fr.getContentPane().removeAll();
         removeAll();
-
-        JPanel header=new JPanel();
+        
+         JPanel header=new JPanel();
         header.setLayout(new BorderLayout());
         header.add(fr.home,BorderLayout.LINE_END);
         JButton  back = new JButton(backTime);
         back.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                selectedOption=null;
-                new SheduleView(fr);
+                public void actionPerformed(ActionEvent e){
+                    selectedOption=null;
+                    new SheduleView(fr);
 
-            }
-        });
-        setLayout(new GridLayout(3,3));
-        JButton dayButton=null;
-        for(int day=0;day<7;day++){
+                }
+            });
+            setLayout(new GridLayout(4,3));
+            JButton dayButton=null;
+             for(int day=0;day<7;day++){
             switch(day){
-                case 0:dayButton= new JButton("Sunday");
-                    break;
-                case 1:dayButton= new JButton("Monday");
-                    break;
-                case 2:dayButton= new JButton("Tuesday");
-                    break;
-                case 3:dayButton= new JButton("Wednesday");
-                    break;
-                case 4:dayButton= new JButton("Thursday");
-                    break;
-                case 5:dayButton= new JButton("Friday");
-                    break;
-                case 6:dayButton= new JButton("Saturday");
-                    break;
+                 case 0:dayButton= new JButton("Sunday");
+            break;
+            case 1:dayButton= new JButton("Monday");
+            break;
+            case 2:dayButton= new JButton("Tuesday");
+            break;
+            case 3:dayButton= new JButton("Wednesday");
+            break;
+            case 4:dayButton= new JButton("Thursday");
+            break;
+            case 5:dayButton= new JButton("Friday");
+            break;
+            case 6:dayButton= new JButton("Saturday");
+            break;
+           
             }
             add(dayButton);
-            final int day2=day+1;
+           int tempDay=day;
+          
+             final int day2=tempDay+1;
             dayButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
-                    createByDayGUI(day2);
-                }});
-        }
-
-
+                    
+            createByDayGUI(day2);
+            }});
+            }
+            
+            
+            
         header.add(back,BorderLayout.LINE_START);
-        fr.add(header,BorderLayout.PAGE_START);
+        fr.add(header,BorderLayout.PAGE_START); 
         fr.add(this);
         repaint();
         revalidate();
 
         fr.repaint();
         fr.revalidate();
-
+        
     }
+    
+    
+    
+    
+    
+    
     private void byDeviceView(){
         fr.getContentPane().removeAll();
         removeAll();
@@ -180,34 +195,35 @@ public class SheduleView extends JPanel
         }
 
 
-        setLayout(new GridLayout((int)Math.sqrt(devices.size()),(int)Math.sqrt(devices.size())));
+               setLayout(new GridLayout((int)Math.sqrt(devices.size()),(int)Math.sqrt(devices.size())));
+
         for (int i=0;i<devices.size();i++){
             String dv=devices.get(i);
             JButton devButton= new JButton(dv);
             devButton.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
-                    createByDeviceGUI(dv);
+                    public void actionPerformed(ActionEvent e){
+                        createByDeviceGUI(dv);
 
-                    selectedOption="createByDeviceGUI"+dv;
-                }
-            });
+                        selectedOption="createByDeviceGUI"+dv;
+                    }
+                });
 
             add(devButton);
         }
-
+      
         JPanel header=new JPanel();
         header.setLayout(new BorderLayout());
         header.add(fr.home,BorderLayout.LINE_END);
         JButton  back = new JButton(backTime);
         back.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                selectedOption=null;
-                new SheduleView(fr);
-                fr.isSheduleModeSelected=false;
-            }
-        });
+                public void actionPerformed(ActionEvent e){
+                    selectedOption=null;
+                    new SheduleView(fr);
+        fr.isSheduleModeSelected=false;
+                }
+            });
         header.add(back,BorderLayout.LINE_START);
-        fr.add(header,BorderLayout.PAGE_START);
+        fr.add(header,BorderLayout.PAGE_START); 
 
         repaint();
         revalidate();
@@ -248,7 +264,7 @@ public class SheduleView extends JPanel
 
                     boolean containsInSheduleList=false;
                     SingleSheduleView ssv=(SingleSheduleView)centerPanel.getComponent(i);
-
+      
                     for(int k=0;k<sheduleList.size();k++){
                         Shedule shedule2=sheduleList.get(k);
 
@@ -273,12 +289,21 @@ public class SheduleView extends JPanel
 
         }
     }
+    
+    
+    
+    
 
+    
+     ArrayList <Shedule> containingElements=new ArrayList<Shedule>();
     private int usingDay=-1;
     private void createByDayGUI(int day){
-        usingDay=day;
-        selectedOption="createByDayGUI"+day;
-        fr.isSwitchModeSelected=false;
+
+ byDayCommandUsed.removeAll(byDayCommandUsed);
+       
+                usingDay=day;
+                        selectedOption="createByDayGUI"+day;
+  fr.isSwitchModeSelected=false;     
         fr.isSheduleModeSelected=true;
         fr.isTimerModeSelected=false;
         fr.isOnMainMenu=false;
@@ -293,42 +318,43 @@ public class SheduleView extends JPanel
         header.setLayout(new BorderLayout());
         header.add(fr.home,BorderLayout.LINE_END);
         //  header.add(back,BorderLayout.LINE_START);
-        JButton  back = new JButton(backTime);
+         JButton  back = new JButton(backTime);
         back.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                selectedOption=null;
-                selectedOption=null;
-                byDayView();
-                fr.isSheduleModeSelected=false;
+                public void actionPerformed(ActionEvent e){
+                    selectedOption=null;
+    selectedOption=null;
+                  byDayView();
+        fr.isSheduleModeSelected=false;
 
-            }
-        });
+                }
+            });
+            
+               JComboBox commandCombo ;
 
-        JComboBox commandCombo ;
-
-
+        
         String [] comboCommandsString={"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
-
+      
 
         commandCombo= new JComboBox(comboCommandsString);
         commandCombo.setSelectedIndex(day-1);
-
+        
         final String fontName = commandCombo.getSelectedItem().toString();
         commandCombo.setFont(new Font(fontName, Font.BOLD, 20));
-
+    
         commandCombo.addItemListener(new ItemListener() {
 
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    createByDayGUI(commandCombo.getSelectedIndex()+1);
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    if (e.getStateChange() == ItemEvent.SELECTED) {
+                  createByDayGUI(commandCombo.getSelectedIndex()+1);
+                  System.out.println(commandCombo.getSelectedIndex()+1);
+                    }
                 }
-            }
-        });
+            });
         ((JLabel)commandCombo.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-
-
-
+        
+            
+            
 
         header.add(back,BorderLayout.LINE_START);
         header.add(commandCombo);
@@ -342,45 +368,83 @@ public class SheduleView extends JPanel
         usingList=fr.sh.outputPowerCommands;
         neededOutputs=fr.sh.getAllCommandOutput();
         String [] outputs=neededOutputs.split("@@@");
-        center.setLayout(new GridLayout(0,(int)(fr.width/350)));
+        
+     
+        
+        
+        
+                            ArrayList<Shedule> shedules2=fr.sh.db.getShedules();
+     for(Shedule d:shedules2){
+                         System.out.println(" day"+d.getActiveDays()+"::vs::"+day);
+             if(d.getActiveDays().contains(day+" off")||d.getActiveDays().contains(day+" on")){
+                System.out.println("Same day"+d.getActiveDays()+"::vs::"+day);
+                
+                
+           if(!byDayCommandUsed.contains(d.getCommandText())){
 
-        for(int i=0;i<usingList.length;i++){
-            ArrayList <String> list=usingList[i];
-            MyJPanel button = new MyJPanel(list.get(0),1);
-            myPanels.add(button);
-            center.add(button);
-
-        }
-        scrollSpecific = new JScrollPane(center);
-        add(scrollSpecific);
+     String cmd=d.getCommandText();
+           MyJPanel button = new MyJPanel(cmd,1);////1
+            byDayCommandUsed.add(cmd);
+           myPanels.add(button);
+         center.add(button);
+       }
+    
+    
+    }
+       }
+     
+        
+        int row=(int)(Math.sqrt(byDayCommandUsed.size())),colum=(int)(Math.sqrt(byDayCommandUsed.size()));
+        if(row==0&&colum==0){
+        row=1;
+        colum=1;
+    }
+        center.setLayout(new  GridLayout(row,colum));
+       
+    // scrollSpecific = new JScrollPane(center);
+                add(center);
         repaint();
         revalidate();
         fr.repaint();
         fr.revalidate();
-        if(thread==null||!thread.isAlive()||!fr.isSheduleModeSelected){
+  if(thread==null||!thread.isAlive()||!fr.isSheduleModeSelected){
             thread=  new Thread(){
                 public void run(){
                     while(fr.isSheduleModeSelected)   {
                         try{
 
+                              
+    
+                            
                             ArrayList<Shedule> shedules=fr.sh.db.getShedules();
-                            ArrayList<Shedule> activeShedules=new ArrayList<Shedule>();
-                            for(Shedule s:shedules){
-                                System.out.println(s.getActiveDays());
-                                if(s.getActiveDays(). contains(Integer.toString(usingDay)))
-                                    activeShedules.add(s);
-                            }
-                            if(shedules!=null&&fr.isSheduleModeSelected)
-                                update(activeShedules);
-                            Thread.sleep(2000);
+                                                       ArrayList<Shedule> activeShedules=new ArrayList<Shedule>();
+                          for(Shedule s:shedules){
+
+                          if(s.getActiveDays(). contains(Integer.toString(usingDay)))
+                           activeShedules.add(s);
+                        }
+  if(shedules!=null&&fr.isSheduleModeSelected){
+
+        
+                update(activeShedules);
+       
+      
+    }
+                              
+                            Thread.sleep(sleepingTime);
                         }catch(Exception e){}}
                 }};thread.start();}
     }
-
-    JScrollPane   scrollSpecific;
+    ArrayList <String>byDayCommandUsed= new ArrayList<String>();
+    
+    
+    
+    
+    
+     JScrollPane   scrollSpecific;
     public void createByDeviceGUI(String dev){
         System.out.println("createByDeviceGUI:"+dev);
-        fr.isSwitchModeSelected=false;
+         fr.isSwitchModeSelected=false;     
         fr.isSheduleModeSelected=true;
         fr.isTimerModeSelected=false;
         fr.isOnMainMenu=false;
@@ -401,18 +465,18 @@ public class SheduleView extends JPanel
         commandCombo.setSelectedItem(dev);
 
         commandCombo.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 20));
-
+        
         commandCombo.addItemListener(new ItemListener() {
 
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    createByDeviceGUI((String)commandCombo.getSelectedItem().toString());
-                    selectedOption="createByDeviceGUI"+commandCombo.getSelectedItem().toString();
-                    commandCombo.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 20));
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    if (e.getStateChange() == ItemEvent.SELECTED) {
+                        createByDeviceGUI((String)commandCombo.getSelectedItem().toString());
+                        selectedOption="createByDeviceGUI"+commandCombo.getSelectedItem().toString();
+                        commandCombo.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 20));
+                    }
                 }
-            }
-        });
+            });
         ((JLabel)commandCombo.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
         removeAll();
         setLayout(new BorderLayout());
@@ -422,14 +486,14 @@ public class SheduleView extends JPanel
         JButton   addNewSchedule = new JButton(addSchedule);
 
         addNewSchedule.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                fr.isSheduleModeSelected=false;
-                fr.shv=null;
+                public void actionPerformed(ActionEvent e){
+                    fr.isSheduleModeSelected=false;
+                    fr.shv=null;
 
-                new AddNewShedule(fr,dev);
+                    new AddNewShedule(fr,dev);
 
-            }
-        });
+                }
+            });
         bottom.add(addNewSchedule);
         JPanel header=new JPanel();
         header.setLayout(new BorderLayout());
@@ -438,14 +502,14 @@ public class SheduleView extends JPanel
         //  header.add(back,BorderLayout.LINE_START);
         JButton  back = new JButton(backTime);
         back.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+                public void actionPerformed(ActionEvent e){
 
-                byDeviceView();
-                fr.isSheduleModeSelected=false;
-            }
-        });
+                    byDeviceView();
+        fr.isSheduleModeSelected=false;
+                }
+            });
         header.add(back,BorderLayout.LINE_START);
-        JPanel center=new JPanel();
+        JPanel center= new JPanel( );
         myPanels=new <MyJPanel> ArrayList();
         add(header,BorderLayout.PAGE_START);
         add(bottom,BorderLayout.PAGE_END);
@@ -455,20 +519,35 @@ public class SheduleView extends JPanel
         usingList=fr.sh.outputPowerCommands;
         neededOutputs=fr.sh.getAllCommandOutput();
         String [] outputs=neededOutputs.split("@@@");
-        center.setLayout(new BorderLayout());
+       center.setLayout(new BorderLayout());
+     //   center.setPreferredSize(new Dimension(600,606));
+        
+JPanel c2= new JPanel();
         for(int i=0;i<usingList.length;i++){
             ArrayList <String> list=usingList[i];
             if(!list.get(0).equalsIgnoreCase(dev)){
                 continue;
             }
+            
+            System.out.println("--------------list.get(0)"+list.get(0));
             MyJPanel button = new MyJPanel(list.get(0),0);
             myPanels.add(button);
             center.add(button);
 
+
         }
 
-        scrollSpecific = new JScrollPane(center);
-        add(scrollSpecific);
+
+c2.setLayout(new BorderLayout());
+
+          scrollSpecific = new JScrollPane(center);
+scrollSpecific.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+scrollSpecific.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+c2.add(scrollSpecific);
+//c2.add(center);
+
+
+        add(c2);
         repaint();
         revalidate();
         fr.repaint();
@@ -480,17 +559,29 @@ public class SheduleView extends JPanel
                         try{
 
                             ArrayList<Shedule> shedules=fr.sh.db.getShedules();
+                             System.out.println(shedules);
                             if(shedules!=null&&fr.isSheduleModeSelected)
-                                update(shedules);
-                            System.out.println(shedules);
-                            Thread.sleep(2000);
-                        }catch(Exception e){}}
+ {                            //   update(shedules);
+               
+
+    
+                update(shedules);
+  
+      
+      
+
+}
+                            Thread.sleep(sleepingTime);
+                        }catch(Exception e){
+
+                        }}
                 }};thread.start();}
 
     }
 
+    
     private void createGUI(){
-        fr.isSwitchModeSelected=false;
+         fr.isSwitchModeSelected=false;     
         fr.isSheduleModeSelected=true;
         fr.isTimerModeSelected=false;
         fr.isOnMainMenu=false;
@@ -505,14 +596,14 @@ public class SheduleView extends JPanel
         header.setLayout(new BorderLayout());
         header.add(fr.home,BorderLayout.LINE_END);
         //  header.add(back,BorderLayout.LINE_START);
-        JButton  back = new JButton(backTime);
+         JButton  back = new JButton(backTime);
         back.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                selectedOption=null;
-                new SheduleView(fr);
+                public void actionPerformed(ActionEvent e){
+                    selectedOption=null;
+                    new SheduleView(fr);
 
-            }
-        });
+                }
+            });
         header.add(back,BorderLayout.LINE_START);
         JPanel center=new JPanel();
         myPanels=new <MyJPanel> ArrayList();
@@ -524,7 +615,7 @@ public class SheduleView extends JPanel
         usingList=fr.sh.outputPowerCommands;
         neededOutputs=fr.sh.getAllCommandOutput();
         String [] outputs=neededOutputs.split("@@@");
-        center.setLayout(new GridLayout(0,(int)(fr.width/350)));
+        center.setLayout(new GridLayout((int)Math.sqrt(usingList.length),(int)Math.sqrt(usingList.length)));
 
         for(int i=0;i<usingList.length;i++){
             ArrayList <String> list=usingList[i];
@@ -533,25 +624,30 @@ public class SheduleView extends JPanel
             center.add(button);
 
         }
-        scrollSpecific = new JScrollPane(center,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        add(scrollSpecific);
+
+        add(center);
 
         repaint();
         revalidate();
         fr.repaint();
         fr.revalidate();
-        if(thread==null||!thread.isAlive()||!fr.isSheduleModeSelected){
+  if(thread==null||!thread.isAlive()||!fr.isSheduleModeSelected){
             thread=  new Thread(){
                 public void run(){
                     while(fr.isSheduleModeSelected)   {
                         try{
 
                             ArrayList<Shedule> shedules=fr.sh.db.getShedules();
-                            if(shedules!=null&&fr.isSheduleModeSelected)
-                                update(shedules);
-                            Thread.sleep(2000);
+  if(shedules!=null&&fr.isSheduleModeSelected){
+      
+     
+                update(shedules);
+  
+
+    
+    }
+  
+                            Thread.sleep(sleepingTime);
                         }catch(Exception e){}}
                 }};thread.start();}
 
@@ -573,19 +669,19 @@ public class SheduleView extends JPanel
             setBackground(colors[color_id]);
             titlePanel.setBackground(colors[color_id]);
             add(titlePanel,BorderLayout.PAGE_START);
-            //  add(centerPanel);
-            centerPanel.setLayout(new BoxLayout(centerPanel,BoxLayout.Y_AXIS));
-            JScrollPane      scrollSpecific = new JScrollPane(centerPanel,
-                    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-
+            //  add(centerPanel);           
+            
+                        centerPanel.setLayout(new BoxLayout(centerPanel,BoxLayout.Y_AXIS));
+                 JScrollPane      scrollSpecific = new JScrollPane(centerPanel);
+scrollSpecific.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+scrollSpecific.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+           
             add(scrollSpecific,BorderLayout.CENTER);
-            Dimension pSize = new Dimension(340, 140);
-            Dimension mSize = new Dimension(100, 100);
+Dimension pSize = new Dimension(450, 140);
+        Dimension mSize = new Dimension(100, 100);
 
-            setPreferredSize(pSize);
-            setMinimumSize(mSize);
+      setPreferredSize(pSize);
+        setMinimumSize(mSize);
             // example of use
             //   for(int j=0;j<10;j++){
             //     SingleSheduleView ssv=new SingleSheduleView();
@@ -601,15 +697,16 @@ public class SheduleView extends JPanel
 
                 setLayout(new BorderLayout());
                 setBorder(BorderFactory.createLineBorder(Color.black));
-
+               
                 setBackground(colors[color_id]);
 
-                JScrollPane      scrollSpecific = new JScrollPane(centerPanel,
-                        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-                add(scrollSpecific);
-
-                centerPanel.setLayout(new GridLayout(0,(int)(fr.width/350)));
+               JScrollPane      scrollSpecific = new JScrollPane(centerPanel);
+           scrollSpecific.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+      scrollSpecific.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+                add(centerPanel);
+               
+               // centerPanel.setLayout(new GridLayout(0,(int)(fr.width/450)));
+                centerPanel.setLayout(new WrapLayout());
                 //  add(centerPanel);
                 //  add(scrollSpecific,BorderLayout.CENTER);
                 //  centerPanel.setLayout(new BoxLayout(centerPanel,BoxLayout.Y_AXIS));
@@ -619,55 +716,52 @@ public class SheduleView extends JPanel
                 // centerPanel.add(ssv);
                 // }
                 //## end of example
-                Dimension pSize = new Dimension(350, 150);
-                Dimension maxSize = new Dimension(700, 150);
-                Dimension mSize = new Dimension(100, 100);
-                setPreferredSize(pSize);
-                setMinimumSize(mSize);
-                setMaximumSize(maxSize);
+             Dimension pSize = new Dimension(450, 150);
+Dimension maxSize = new Dimension(450, 150);
+        Dimension mSize = new Dimension(100, 100);
+           setPreferredSize(pSize);
+        setMinimumSize(mSize);
+        setMaximumSize(maxSize);
             }
-
-            if(id==1){
+            
+              
+           else if(id==1){
                 this.title=title;
 
-                setLayout(new BorderLayout());
-                setBorder(BorderFactory.createLineBorder(Color.black));
-                JLabel titleLabel= new JLabel(title);
-                titleLabel.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 20));
-                JPanel titlePanel= new JPanel();
-                titlePanel.add(titleLabel);
-                add(titlePanel,BorderLayout.PAGE_START);
-                setBackground(colors[color_id]);
-                titlePanel.setBackground(colors[color_id]);
-                JScrollPane      scrollSpecific = new JScrollPane(centerPanel,
-                        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-                centerPanel.setLayout(new BoxLayout(centerPanel,BoxLayout.Y_AXIS));;
-                add(scrollSpecific);
-                //   centerPanel.setLayout(new GridLayout(0,2));
-                //  add(centerPanel);
-                //  add(scrollSpecific,BorderLayout.CENTER);
+                      setLayout(new BorderLayout());
+            setBorder(BorderFactory.createLineBorder(Color.black));
+            JLabel titleLabel= new JLabel(title);
+            titleLabel.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 20));
+            JPanel titlePanel= new JPanel();
+            titlePanel.add(titleLabel);
+            setBackground(colors[color_id]);
+            titlePanel.setBackground(colors[color_id]);
+           // add(titlePanel,BorderLayout.PAGE_START);
+            //  add(centerPanel);           
+            JPanel extraPanel= new JPanel();
+            extraPanel.setLayout(new BorderLayout());
+            extraPanel.add(titlePanel,BorderLayout.PAGE_START);
+                centerPanel.setLayout(new WrapLayout());
+                extraPanel.add(centerPanel);
+                        //centerPanel.setLayout(new BoxLayout(centerPanel,BoxLayout.Y_AXIS));
+                 JScrollPane      scrollSpecific = new JScrollPane(extraPanel);
+scrollSpecific.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+scrollSpecific.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+           
+            add(scrollSpecific,BorderLayout.CENTER);
+Dimension pSize = new Dimension(450, 140);
+        Dimension mSize = new Dimension(100, 100);
 
-                // example of use
-                //   for(int j=0;j<10;j++){
-                //     SingleSheduleView ssv=new SingleSheduleView();
-                // centerPanel.add(ssv);
-                // }
-                //## end of example
-                Dimension pSize = new Dimension(350, 150);
-                Dimension maxSize = new Dimension(700, 150);
-                Dimension mSize = new Dimension(100, 100);
-                setPreferredSize(pSize);
-                setMinimumSize(mSize);
-                setMaximumSize(maxSize);
+      setPreferredSize(pSize);
+        setMinimumSize(mSize);
             }
+          
 
 
-
-
+   
         }
 
-        protected void update(Shedule shedule,ArrayList<Shedule> sheduleList){
+        protected  void update(Shedule shedule,ArrayList<Shedule> sheduleList){
             boolean contains=false;
             SingleSheduleView usingSsv=null;
 
@@ -684,11 +778,11 @@ public class SheduleView extends JPanel
                 centerPanel.repaint();
                 centerPanel.revalidate();
                 if(scrollSpecific!=null){
-
-                    scrollSpecific.repaint();
-                    scrollSpecific.revalidate();
+                
+                scrollSpecific.repaint();
+                scrollSpecific.revalidate();
                 }
-                centerPanel.getParent().repaint();
+                 centerPanel.getParent().repaint();
                 centerPanel.getParent().revalidate();
             }else{
                 if(usingSsv!=null){
@@ -702,14 +796,14 @@ public class SheduleView extends JPanel
 
         }
 
-    }
+    } 
     class SingleSheduleView extends JPanel{
 
         private String activeDays, time, weeklyString, activeString,commandString;
         protected  int id;
         protected JPanel firstRow,secondRow;
         private JButton delete,edit;
-        private JCheckBox isWeekly,isActive;
+        private JCheckBox isWeekly,isActive; 
         private JLabel [] days= new JLabel[7];
         private Shedule shedule;
         private JPanel centerPanel,header;
@@ -747,28 +841,30 @@ public class SheduleView extends JPanel
             isActive= new JCheckBox("is Active");
             isWeekly.addItemListener(new ItemListener() {
 
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    if(e.getStateChange() == ItemEvent.SELECTED){
-                        fr.sh.db.updateSingleShedule(commandString,Integer.toString(id),DB.IS_WEEKLY+"true");
-                    }else{
-                        fr.sh.db.updateSingleShedule(commandString,Integer.toString(id),DB.IS_WEEKLY+"false");
-                    }
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        if(e.getStateChange() == ItemEvent.SELECTED){
+                            fr.sh.db.updateSingleShedule(commandString,Integer.toString(id),DB.IS_WEEKLY+"true");
+                        }else{
+                            fr.sh.db.updateSingleShedule(commandString,Integer.toString(id),DB.IS_WEEKLY+"false");
+                        }
 
-                }
-            });
+                    }
+                });
             isActive.addItemListener(new ItemListener() {
 
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    if(e.getStateChange() == ItemEvent.SELECTED){
-                        fr.sh.db.updateSingleShedule(commandString,Integer.toString(id),DB.IS_ACTIVE+"true");
-                    }else{
-                        fr.sh.db.updateSingleShedule(commandString,Integer.toString(id),DB.IS_ACTIVE+"false");
-                    }
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        if(e.getStateChange() == ItemEvent.SELECTED){
+                            fr.sh.db.updateSingleShedule(commandString,Integer.toString(id),DB.IS_ACTIVE+"true");
+                        }else{
+                            fr.sh.db.updateSingleShedule(commandString,Integer.toString(id),DB.IS_ACTIVE+"false");
+                        }
 
-                }
-            });
+                    }
+                });
+                
+
             centerPanel.setLayout(new BoxLayout(centerPanel,BoxLayout.Y_AXIS));
             centerPanel.add(firstRow);
             centerPanel.add(secondRow);
@@ -783,29 +879,30 @@ public class SheduleView extends JPanel
             for(int i=0;i<7;i++){
                 JLabel dayButton=null;
                 switch(i){
-                    case 0:
-                        dayButton= new JLabel("Su",SwingConstants.CENTER);
-                        break;
+                      case 0:
+                    dayButton= new JLabel("Su",SwingConstants.CENTER);
+                    break;
                     case 1:
-                        dayButton= new JLabel("Mo",SwingConstants.CENTER);
-                        break;
+                    dayButton= new JLabel("Mo",SwingConstants.CENTER);
+                    break;
                     case 2:
-                        dayButton= new JLabel("Tu",SwingConstants.CENTER);
-                        break;
+                    dayButton= new JLabel("Tu",SwingConstants.CENTER);
+                    break;
                     case 3:
-                        dayButton= new JLabel("We",SwingConstants.CENTER);
-                        break;
+                    dayButton= new JLabel("We",SwingConstants.CENTER);
+                    break;
                     case 4:
-                        dayButton= new JLabel("Th",SwingConstants.CENTER);
-                        break;
+                    dayButton= new JLabel("Th",SwingConstants.CENTER);
+                    break;
                     case 5:
-                        dayButton= new JLabel("Fr",SwingConstants.CENTER);
-                        break;
+                    dayButton= new JLabel("Fr",SwingConstants.CENTER);
+                    break;
                     case 6:
-                        dayButton= new JLabel("Sa",SwingConstants.CENTER);
-                        break;
-                    default:
-                        dayButton= new JLabel("Uknown",SwingConstants.CENTER);
+                    dayButton= new JLabel("Sa",SwingConstants.CENTER);
+                    break;    
+                  
+                    default: 
+                    dayButton= new JLabel("Uknown",SwingConstants.CENTER);
 
                 }
                 dayButton.setOpaque(true);
@@ -832,40 +929,40 @@ public class SheduleView extends JPanel
             add(edit,BorderLayout.LINE_START);
             add(delete,BorderLayout.LINE_END);
             edit.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
-                    fr.isSheduleModeSelected=false;
+                    public void actionPerformed(ActionEvent e){
+                        fr.isSheduleModeSelected=false;
 
-                    fr.shv=null;
-                    new EditSheduleView(fr,shedule);
-                }
-            });
+                        fr.shv=null;
+                        new EditSheduleView(fr,shedule);
+                    }
+                });
             delete.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
+                    public void actionPerformed(ActionEvent e){
 
-                    new Thread(){
-                        public void run(){
-                            try{
-                                if(delete!=null){
+                        new Thread(){
+                            public void run(){
+                                try{
+                                    if(delete!=null){
 
-                                    delete.setIcon(deleteAmbIcon);
-                                    delete.setEnabled(false);
-                                }
-                                sleep(3000);
-                                if(delete!=null){
-                                    delete.setIcon(deleteIcon);
-                                    delete.setEnabled(true);
-                                }}catch(Exception e){}
-                        }
+                                        delete.setIcon(deleteAmbIcon);
+                                        delete.setEnabled(false);
+                                    }
+                                    sleep(sleepingTime+1000);
+                                    if(delete!=null){
+                                        delete.setIcon(deleteIcon);
+                                        delete.setEnabled(true);
+                                    }}catch(Exception e){}
+                            }
 
-                    }.start();
+                        }.start();
 
-                    fr.sh.db.removeShedule(Integer.toString(id),commandString);
-                    repaint();
-                    revalidate();
-                    centerPanel.repaint();
-                    centerPanel.revalidate();
-                }
-            });
+                        fr.sh.db.removeShedule(Integer.toString(id),commandString);
+                        repaint();
+                        revalidate();
+                        centerPanel.repaint();
+                        centerPanel.revalidate();
+                    }
+                });
 
             updateAll(shedule);
 
@@ -897,6 +994,10 @@ public class SheduleView extends JPanel
             this.activeDays=activeDays;
             updateDaysEnable();
         }
+        
+        
+        
+   
 
         protected void updateDaysEnable(){
 
@@ -1024,4 +1125,623 @@ public class SheduleView extends JPanel
 
     }
 
+
+public class WrapLayout extends FlowLayout
+{
+    private Dimension preferredLayoutSize;
+
+    /**
+    * Constructs a new <code>WrapLayout</code> with a left
+    * alignment and a default 5-unit horizontal and vertical gap.
+    */
+    public WrapLayout()
+    {
+        super();
+    }
+
+    /**
+    * Constructs a new <code>FlowLayout</code> with the specified
+    * alignment and a default 5-unit horizontal and vertical gap.
+    * The value of the alignment argument must be one of
+    * <code>WrapLayout</code>, <code>WrapLayout</code>,
+    * or <code>WrapLayout</code>.
+    * @param align the alignment value
+    */
+    public WrapLayout(int align)
+    {
+        super(align);
+    }
+
+    /**
+    * Creates a new flow layout manager with the indicated alignment
+    * and the indicated horizontal and vertical gaps.
+    * <p>
+    * The value of the alignment argument must be one of
+    * <code>WrapLayout</code>, <code>WrapLayout</code>,
+    * or <code>WrapLayout</code>.
+    * @param align the alignment value
+    * @param hgap the horizontal gap between components
+    * @param vgap the vertical gap between components
+    */
+    public WrapLayout(int align, int hgap, int vgap)
+    {
+        super(align, hgap, vgap);
+    }
+
+    /**
+    * Returns the preferred dimensions for this layout given the
+    * <i>visible</i> components in the specified target container.
+    * @param target the component which needs to be laid out
+    * @return the preferred dimensions to lay out the
+    * subcomponents of the specified container
+    */
+    @Override
+    public Dimension preferredLayoutSize(Container target)
+    {
+        return layoutSize(target, true);
+    }
+
+    /**
+    * Returns the minimum dimensions needed to layout the <i>visible</i>
+    * components contained in the specified target container.
+    * @param target the component which needs to be laid out
+    * @return the minimum dimensions to lay out the
+    * subcomponents of the specified container
+    */
+    @Override
+    public Dimension minimumLayoutSize(Container target)
+    {
+        Dimension minimum = layoutSize(target, false);
+        minimum.width -= (getHgap() + 1);
+        return minimum;
+    }
+
+    /**
+    * Returns the minimum or preferred dimension needed to layout the target
+    * container.
+    *
+    * @param target target to get layout size for
+    * @param preferred should preferred size be calculated
+    * @return the dimension to layout the target container
+    */
+    private Dimension layoutSize(Container target, boolean preferred)
+    {
+    synchronized (target.getTreeLock())
+    {
+        //  Each row must fit with the width allocated to the containter.
+        //  When the container width = 0, the preferred width of the container
+        //  has not yet been calculated so lets ask for the maximum.
+
+        int targetWidth = target.getSize().width;
+        Container container = target;
+
+        while (container.getSize().width == 0 && container.getParent() != null)
+        {
+            container = container.getParent();
+        }
+
+        targetWidth = container.getSize().width;
+
+        if (targetWidth == 0)
+            targetWidth = Integer.MAX_VALUE;
+
+        int hgap = getHgap();
+        int vgap = getVgap();
+        Insets insets = target.getInsets();
+        int horizontalInsetsAndGap = insets.left + insets.right + (hgap * 2);
+        int maxWidth = targetWidth - horizontalInsetsAndGap;
+
+        //  Fit components into the allowed width
+
+        Dimension dim = new Dimension(0, 0);
+        int rowWidth = 0;
+        int rowHeight = 0;
+
+        int nmembers = target.getComponentCount();
+
+        for (int i = 0; i < nmembers; i++)
+        {
+            Component m = target.getComponent(i);
+
+            if (m.isVisible())
+            {
+                Dimension d = preferred ? m.getPreferredSize() : m.getMinimumSize();
+
+                //  Can't add the component to current row. Start a new row.
+
+                if (rowWidth + d.width > maxWidth)
+                {
+                    addRow(dim, rowWidth, rowHeight);
+                    rowWidth = 0;
+                    rowHeight = 0;
+                }
+
+                //  Add a horizontal gap for all components after the first
+
+                if (rowWidth != 0)
+                {
+                    rowWidth += hgap;
+                }
+
+                rowWidth += d.width;
+                rowHeight = Math.max(rowHeight, d.height);
+            }
+        }
+
+        addRow(dim, rowWidth, rowHeight);
+
+        dim.width += horizontalInsetsAndGap;
+        dim.height += insets.top + insets.bottom + vgap * 2;
+
+        //  When using a scroll pane or the DecoratedLookAndFeel we need to
+        //  make sure the preferred size is less than the size of the
+        //  target containter so shrinking the container size works
+        //  correctly. Removing the horizontal gap is an easy way to do this.
+
+        Container scrollPane = SwingUtilities.getAncestorOfClass(JScrollPane.class, target);
+
+        if (scrollPane != null && target.isValid())
+        {
+            dim.width -= (hgap + 1);
+        }
+
+        return dim;
+    }
+    }
+
+    /*
+     *  A new row has been completed. Use the dimensions of this row
+     *  to update the preferred size for the container.
+     *
+     *  @param dim update the width and height when appropriate
+     *  @param rowWidth the width of the row to add
+     *  @param rowHeight the height of the row to add
+     */
+    private void addRow(Dimension dim, int rowWidth, int rowHeight)
+    {
+        dim.width = Math.max(dim.width, rowWidth);
+
+        if (dim.height > 0)
+        {
+            dim.height += getVgap();
+        }
+
+        dim.height += rowHeight;
+    }
 }
+
+public class VerticalFlowLayout implements LayoutManager, java.io.Serializable
+{
+    /**
+     * This value indicates that each row of components
+     * should be left-justified.
+     */
+    public static final int TOP     = 0;
+
+    /**
+     * This value indicates that each row of components
+     * should be centered.
+     */
+    public static final int CENTER    = 1;
+
+    /**
+     * This value indicates that each row of components
+     * should be right-justified.
+     */
+    public static final int BOTTOM     = 2;
+
+    /**
+     * <code>align</code> is the property that determines
+     * how each column distributes empty space.
+     * It can be one of the following three values:
+     * <ul>
+     * <code>TOP</code>
+     * <code>BOTTOM</code>
+     * <code>CENTER</code>
+     * </ul>
+     *
+     * @see #getAlignment
+     * @see #setAlignment
+     */
+    int align;     // This is the one we actually use
+
+    /**
+     * The flow layout manager allows a seperation of
+     * components with gaps.  The horizontal gap will
+     * specify the space between components and between
+     * the components and the borders of the
+     * <code>Container</code>.
+     *
+     * @see #getHgap()
+     * @see #setHgap(int)
+     */
+    int hgap;
+
+    /**
+     * The flow layout manager allows a seperation of
+     * components with gaps.  The vertical gap will
+     * specify the space between rows and between the
+     * the rows and the borders of the <code>Container</code>.
+     *
+     * @see #getHgap()
+     * @see #setHgap(int)
+     */
+    int vgap;
+
+    /**
+     * Constructs a new <code>VerticalFlowLayout</code> with a centered alignment and a
+     * default 5-unit horizontal and vertical gap.
+     */
+    public VerticalFlowLayout()
+    {
+        this(CENTER, 5, 5);
+    }
+
+    /**
+     * Constructs a new <code>VerticalFlowLayout</code> with the specified
+     * alignment and a default 5-unit horizontal and vertical gap.
+     * The value of the alignment argument must be one of
+     * <code>VerticalFlowLayout.TOP</code>, <code>VerticalFlowLayout.BOTTOM</code>,
+     * or <code>VerticalFlowLayout.CENTER</code>
+     * @param align the alignment value
+     */
+    public VerticalFlowLayout(int align)
+    {
+        this(align, 5, 5);
+    }
+
+    /**
+     * Creates a new flow layout manager with the indicated alignment
+     * and the indicated horizontal and vertical gaps.
+     * <p>
+     * The value of the alignment argument must be one of
+     * <code>VerticalFlowLayout.TOP</code>, <code>VerticalFlowLayout.BOTTOM</code>,
+     * or <code>VerticalFlowLayout.CENTER</code>.
+     * @param     align   the alignment value
+     * @param     hgap  the horizontal gap between components
+     *                   and between the components and the
+     *                   borders of the <code>Container</code>
+     * @param     vgap  the vertical gap between components
+     *                   and between the components and the
+     *                   borders of the <code>Container</code>
+     */
+    public VerticalFlowLayout(int align, int hgap, int vgap)
+    {
+        this.hgap = hgap;
+        this.vgap = vgap;
+        setAlignment(align);
+    }
+
+    /**
+     * Gets the alignment for this layout.
+     * Possible values are <code>VerticalFlowLayout.TOP</code>,
+     * <code>VerticalFlowLayout.BOTTOM</code> or <code>VerticalFlowLayout.CENTER</code>,
+     * @return   the alignment value for this layout
+     * @see     java.awt.VerticalFlowLayout#setAlignment
+     * @since     JDK1.1
+     */
+    public int getAlignment()
+    {
+        return align;
+    }
+
+    /**
+     * Sets the alignment for this layout. Possible values are
+     * <ul>
+     * <li><code>VerticalFlowLayout.TOP</code>
+     * <li><code>VerticalFlowLayout.BOTTOM</code>
+     * <li><code>VerticalFlowLayout.CENTER</code>
+     * </ul>
+     * @param     align one of the alignment values shown above
+     * @see     #getAlignment()
+     * @since     JDK1.1
+     */
+    public void setAlignment(int align)
+    {
+        this.align = align;
+    }
+
+    /**
+     * Gets the horizontal gap between components
+     * and between the components and the borders
+     * of the <code>Container</code>
+     *
+     * @return   the horizontal gap between components
+     *           and between the components and the borders
+     *           of the <code>Container</code>
+     * @see     java.awt.VerticalFlowLayout#setHgap
+     * @since     JDK1.1
+     */
+    public int getHgap() {
+        return hgap;
+    }
+
+    /**
+     * Sets the horizontal gap between components and
+     * between the components and the borders of the
+     * <code>Container</code>.
+     *
+     * @param hgap the horizontal gap between components
+     *           and between the components and the borders
+     *           of the <code>Container</code>
+     * @see     java.awt.VerticalFlowLayout#getHgap
+     * @since     JDK1.1
+     */
+    public void setHgap(int hgap) {
+        this.hgap = hgap;
+    }
+
+    /**
+     * Gets the vertical gap between components and
+     * between the components and the borders of the
+     * <code>Container</code>.
+     *
+     * @return   the vertical gap between components
+     *           and between the components and the borders
+     *           of the <code>Container</code>
+     * @see     java.awt.VerticalFlowLayout#setVgap
+     * @since     JDK1.1
+     */
+    public int getVgap() {
+        return vgap;
+    }
+
+    /**
+     * Sets the vertical gap between components and between
+     * the components and the borders of the <code>Container</code>.
+     *
+     * @param vgap the vertical gap between components
+     *           and between the components and the borders
+     *           of the <code>Container</code>
+     * @see     java.awt.VerticalFlowLayout#getVgap
+     */
+    public void setVgap(int vgap) {
+        this.vgap = vgap;
+    }
+
+    /**
+     * Adds the specified component to the layout.
+     * Not used by this class.
+     * @param name the name of the component
+     * @param comp the component to be added
+     */
+    public void addLayoutComponent(String name, Component comp) {
+    }
+
+    /**
+     * Removes the specified component from the layout.
+     * Not used by this class.
+     * @param comp the component to remove
+     * @see    java.awt.Container#removeAll
+     */
+    public void removeLayoutComponent(Component comp) {
+    }
+
+    /**
+     * Returns the preferred dimensions for this layout given the
+     * <i>visible</i> components in the specified target container.
+     *
+     * @param target the container that needs to be laid out
+     * @return  the preferred dimensions to lay out the
+     *          subcomponents of the specified container
+     * @see Container
+     * @see #minimumLayoutSize
+     * @see    java.awt.Container#getPreferredSize
+     */
+    public Dimension preferredLayoutSize(Container target)
+    {
+    synchronized (target.getTreeLock())
+    {
+        Dimension dim = new Dimension(0, 0);
+        int nmembers = target.getComponentCount();
+        boolean firstVisibleComponent = true;
+
+        for (int i = 0 ; i < nmembers ; i++)
+        {
+            Component m = target.getComponent(i);
+
+            if (m.isVisible())
+            {
+                Dimension d = m.getPreferredSize();
+                dim.width = Math.max(dim.width, d.width);
+
+                if (firstVisibleComponent)
+                {
+                    firstVisibleComponent = false;
+                }
+                else
+                {
+                    dim.height += vgap;
+                }
+
+                dim.height += d.height;
+            }
+        }
+
+        Insets insets = target.getInsets();
+        dim.width += insets.left + insets.right + hgap*2;
+        dim.height += insets.top + insets.bottom + vgap*2;
+        return dim;
+    }
+    }
+
+    /**
+     * Returns the minimum dimensions needed to layout the <i>visible</i>
+     * components contained in the specified target container.
+     * @param target the container that needs to be laid out
+     * @return  the minimum dimensions to lay out the
+     *          subcomponents of the specified container
+     * @see #preferredLayoutSize
+     * @see    java.awt.Container
+     * @see    java.awt.Container#doLayout
+     */
+    public Dimension minimumLayoutSize(Container target)
+    {
+    synchronized (target.getTreeLock())
+    {
+        Dimension dim = new Dimension(0, 0);
+        int nmembers = target.getComponentCount();
+        boolean firstVisibleComponent = true;
+
+        for (int i = 0 ; i < nmembers ; i++)
+        {
+            Component m = target.getComponent(i);
+            if (m.isVisible())
+            {
+                Dimension d = m.getMinimumSize();
+                dim.width = Math.max(dim.width, d.width);
+
+                if (firstVisibleComponent)
+                {
+                    firstVisibleComponent = false;
+                }
+                else
+                {
+                    dim.height += vgap;
+                }
+
+                dim.height += d.height;
+            }
+        }
+
+
+        Insets insets = target.getInsets();
+        dim.width += insets.left + insets.right + hgap*2;
+        dim.height += insets.top + insets.bottom + vgap*2;
+        return dim;
+    }
+    }
+
+    /**
+     * Lays out the container. This method lets each
+     * <i>visible</i> component take
+     * its preferred size by reshaping the components in the
+     * target container in order to satisfy the alignment of
+     * this <code>VerticalFlowLayout</code> object.
+     *
+     * @param target the specified component being laid out
+     * @see Container
+     * @see    java.awt.Container#doLayout
+     */
+    public void layoutContainer(Container target)
+    {
+    synchronized (target.getTreeLock())
+    {
+        Insets insets = target.getInsets();
+        int maxHeight = target.getSize().height - (insets.top + insets.bottom + vgap*2);
+        int nmembers = target.getComponentCount();
+        int x = insets.left + hgap;
+        int y = 0;
+        int columnWidth = 0;
+        int start = 0;
+
+        boolean ttb = target.getComponentOrientation().isLeftToRight();
+
+        for (int i = 0 ; i < nmembers ; i++)
+        {
+            Component m = target.getComponent(i);
+
+            if (m.isVisible())
+            {
+                Dimension d = m.getPreferredSize();
+                m.setSize(d.width, d.height);
+
+                if ((y == 0) || ((y + d.height) <= maxHeight))
+                {
+                    if (y > 0)
+                    {
+                        y += vgap;
+                    }
+
+                    y += d.height;
+                    columnWidth = Math.max(columnWidth, d.width);
+                }
+                else
+                {
+                    moveComponents(target, x, insets.top + vgap, columnWidth, maxHeight - y, start, i, ttb);
+                    y = d.height;
+                    x += hgap + columnWidth;
+                    columnWidth = d.width;
+                    start = i;
+                }
+            }
+        }
+
+        moveComponents(target, x, insets.top + vgap, columnWidth, maxHeight - y, start, nmembers, ttb);
+    }
+    }
+
+    /**
+     * Centers the elements in the specified row, if there is any slack.
+     * @param target the component which needs to be moved
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param width the width dimensions
+     * @param height the height dimensions
+     * @param columnStart the beginning of the column
+     * @param columnEnd the the ending of the column
+     */
+    private void moveComponents(
+        Container target, int x, int y, int width, int height, int columnStart, int columnEnd, boolean ttb)
+    {
+        switch (align)
+        {
+            case TOP:
+                y += ttb ? 0 : height;
+                break;
+            case CENTER:
+                y += height / 2;
+                break;
+            case BOTTOM:
+                y += ttb ? height : 0;
+                break;
+        }
+
+        for (int i = columnStart ; i < columnEnd ; i++)
+        {
+            Component m = target.getComponent(i);
+
+            if (m.isVisible())
+            {
+                int cx;
+                cx = x + (width - m.getSize().width) / 2;
+
+                if (ttb)
+                {
+                    m.setLocation(cx, y);
+                }
+                else
+                {
+                    m.setLocation(cx, target.getSize().height - y - m.getSize().height);
+                }
+
+                y += m.getSize().height + vgap;
+            }
+        }
+    }
+
+    /**
+     * Returns a string representation of this <code>VerticalFlowLayout</code>
+     * object and its values.
+     * @return   a string representation of this layout
+     */
+    public String toString()
+    {
+        String str = "";
+
+        switch (align)
+        {
+            case TOP:    str = ",align=top"; break;
+            case CENTER: str = ",align=center"; break;
+            case BOTTOM: str = ",align=bottom"; break;
+        }
+
+        return getClass().getName() + "[hgap=" + hgap + ",vgap=" + vgap + str + "]";
+    }
+
+
+}
+
+}
+
+
